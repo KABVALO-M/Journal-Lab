@@ -1,0 +1,106 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% load tailwind_tags %}
+{% block title %}JournoLab - Tutorials{% endblock %}
+
+{% block content %}
+    <!-- Search Input Field -->
+    <div class="mb-4 p-4">
+        <input 
+            type="text" 
+            placeholder="Search tutorials..." 
+            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+        />
+    </div>
+
+    <!-- Categories for Filtering -->
+    <div class="flex space-x-4 px-4">
+        <span class="text-white">Categories:</span>
+        <a href="{% url 'core:tutorials' %}?category=" class="text-white hover:underline">All</a>  <!-- Link to show all tutorials -->
+        {% for category in categories %}
+            <a href="{% url 'core:tutorials' %}?category={{ category.id }}" class="text-white hover:underline">{{ category.name }}</a>
+        {% endfor %}
+    </div>
+
+    <!-- Tutorials Content -->
+    <div class="content h-[67vh] overflow-y-auto p-5">
+        <h2 class="text-3xl font-bold text-white mb-4">Tutorials</h2>
+        
+        <!-- Grid Layout for Tutorials -->
+        <div class="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-4">
+            <!-- Loop through the tutorials -->
+            {% for tutorial in tutorials %}
+            <div class="tutorial-card bg-gray-100 p-4 rounded-lg shadow-lg">
+                <!-- Tutorial Header -->
+                <div class="flex items-center justify-between">
+                    <!-- Profile Picture, Name, and Date -->
+                    <div class="flex items-center space-x-4">
+                        <img 
+                            src="{% static 'images/profile-placeholder.png' %}" 
+                            alt="Profile picture" 
+                            class="w-16 h-16 rounded-full"
+                        >
+                        <div>
+                            <p class="text-lg font-semibold text-gray-900">{{ tutorial.author.username }}</p>
+                            <p class="text-sm text-gray-500">Published on {{ tutorial.created_at|date:"F d, Y" }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tutorial Title and Description -->
+                <div class="mt-4">
+                    <a href="{% url 'core:tutorial_detail' tutorial.id %}" class="text-xl font-semibold text-blue-600 hover:underline">
+                        {{ tutorial.title|truncatechars:50 }}  <!-- Truncate title to 50 characters -->
+                    </a>
+                    <p class="text-gray-800">{{ tutorial.content|truncatechars:80 }}</p>
+                </div>
+                
+                <!-- Tutorial Media Section -->
+                <div class="mt-4">
+                    {% if tutorial.thumbnail %}
+                        <!-- Image Thumbnail -->
+                        <img 
+                            src="{{ tutorial.thumbnail.url }}" 
+                            alt="Tutorial thumbnail" 
+                            class="w-full h-auto rounded-lg shadow-md"
+                        >
+                    {% elif tutorial.video %}
+                        <!-- Video Thumbnail -->
+                        <video 
+                            controls 
+                            class="w-full h-auto rounded-lg shadow-md"
+                        >
+                            <source src="{{ tutorial.video.url }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    {% endif %}
+                </div>
+
+                <!-- Likes and Comments Count -->
+                <div class="flex justify-between items-center mt-4">
+                    <div class="text-gray-700">
+                        <span>{{ tutorial.likes.count }} Likes</span>
+                        <span class="ml-4">{{ tutorial.comments.count }} Comments</span>
+                    </div>
+                </div>
+
+                <!-- Horizontal Rule -->
+                <hr class="border-t-2 border-gray-300 my-2">
+
+                <!-- Like and Comments Buttons -->
+                <div class="flex justify-start items-center mt-2">
+                    <button class="like-button text-blue-500 hover:text-blue-700 mr-4" onclick="likeTutorial('{{ tutorial.id }}')">
+                        <i class="fa-solid fa-thumbs-up"></i> Like
+                    </button>
+                    <button class="comments-button text-blue-500 hover:text-blue-700" onclick="window.location.href='{% url 'core:tutorial_detail' tutorial.id %}'">
+                        <i class="fa-solid fa-comments"></i> Comments
+                    </button>
+                </div>
+            </div>
+            {% empty %}
+                <p>No tutorials available.</p>
+            {% endfor %}
+        </div>
+        
+    </div>
+{% endblock %}

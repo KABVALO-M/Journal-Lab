@@ -1,0 +1,244 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>JournoLab - Landing Page</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    {% tailwind_css %}
+    <link rel="stylesheet" href="{% static '/css/custom.css' %}" />
+    <script src="{% static '/js/landing.js' %}" defer></script>
+  </head>
+
+  <body
+    class="bg-[#000080] text-white font-serif leading-normal tracking-normal h-screen flex flex-col"
+  >
+    {% comment %} Including messages in landing page {% endcomment %}
+    {% include 'core/messages.html' %}
+    <!-- Main Wrapper -->
+    <div class="w-full flex flex-col flex-grow">
+      <!-- Header Section -->
+      {% include 'core/partials/header.html' %}
+
+      <!-- Full-width Black Divider Above Main Content -->
+      <hr class="border-t-2 border-black w-full mb-8" />
+
+      <!-- Main Content Section -->
+      <div
+        class="container mx-auto px-4 lg:px-20 xl:px-32 flex flex-col flex-grow justify-center"
+      >
+        <section
+          class="flex flex-col lg:flex-row items-center justify-between relative flex-1"
+        >
+          <div class="lg:w-1/2">
+            <h2 class="text-5xl font-bold text-white text-left">
+              Welcome to JournoLab
+            </h2>
+            <p class="text-xl mt-4 text-white text-left">
+              A Resource Hub for Aspiring Journalists in Malawi.
+            </p>
+            <p class="mt-4 text-white text-left">
+              Join us as we explore the world of journalism with resources,
+              tutorials, and mentorship tailored for you. Sign In to See Posts.
+            </p>
+            <a
+              href="{% url 'core:posts' %}"
+              class="mt-6 inline-block bg-black text-white px-6 py-3 rounded-full hover:bg-gray-800 transition duration-300"
+              >Start Reading</a
+            >
+          </div>
+          <div class="lg:w-1/2 flex justify-end">
+            <img
+              src="{% static 'images/landingpage-transparent.png' %}"
+              alt="JournoLab"
+              class="h-auto max-w-[90%]"
+            />
+          </div>
+        </section>
+      </div>
+
+      <!-- Full-width Black Divider Below Main Content -->
+      <hr class="border-t-2 border-black w-full my-8" />
+    </div>
+
+    <!-- Centered Links Section at the Bottom -->
+    {% include 'core/partials/footer.html' %}
+
+    <!-- Signup Modal -->
+    <div id="signupModal" class="modal flex items-center justify-center">
+      <div
+        class="bg-[#000080] text-white rounded-lg shadow-lg p-6 w-full max-w-md relative"
+      >
+        <button
+          onclick="closeModal()"
+          class="absolute top-2 right-2 text-white hover:text-gray-600"
+        >
+          &times;
+        </button>
+        <h2 id="modalTitle" class="text-2xl font-bold mb-4 text-center">
+          Join JournoLab
+        </h2>
+
+        <!-- Sign Up Options Div -->
+        <div id="signupOptions">
+          <div class="space-y-4">
+            <a
+              href="#"
+              id="googleSignup"
+              class="flex items-center justify-center border border-black rounded-full bg-white text-black px-4 py-2 w-full hover:bg-gray-100 transition duration-300"
+            >
+              <img
+                src="https://img.icons8.com/color/24/000000/google-logo.png"
+                alt="Google"
+                class="mr-2"
+              />
+              Sign up with Google
+            </a>
+            <a
+              href="#"
+              id="facebookSignup"
+              class="flex items-center justify-center border border-black rounded-full bg-white text-black px-4 py-2 w-full hover:bg-gray-100 transition duration-300"
+            >
+              <img
+                src="https://img.icons8.com/color/24/000000/facebook-new.png"
+                alt="Facebook"
+                class="mr-2"
+              />
+              Sign up with Facebook
+            </a>
+            <a
+              href="#"
+              id="emailSignupLink"
+              class="flex items-center justify-center border border-black rounded-full bg-white text-black px-4 py-2 w-full hover:bg-gray-100 transition duration-300"
+              onclick="showEmailSignup()"
+            >
+              <img
+                src="https://img.icons8.com/material-outlined/24/000000/email.png"
+                alt="Email"
+                class="mr-2"
+              />
+              Sign up with Email
+            </a>
+          </div>
+          <p class="mt-4 text-center text-white">
+            Already have an account?
+            <a href="#" class="text-blue-600 hover:underline">Sign in</a>
+          </p>
+          <p class="mt-2 text-sm text-white text-center">
+            Click “Sign up” to agree to Journolab's Terms of Service and
+            acknowledge that Journolab’s Privacy Policy applies to you.
+          </p>
+        </div>
+
+        <!-- Email Sign Up Form Div -->
+        <div id="emailSignup" class="hidden">
+          <form id="signupForm" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="sign_up" />
+            <!-- Hidden input to identify the form -->
+            <div class="space-y-4">
+              {{ form.first_name }} {% if form.first_name.errors %}
+              <div class="text-red-500 text-sm">
+                {{ form.first_name.errors }}
+              </div>
+              {% endif %} {{ form.last_name }} {% if form.last_name.errors %}
+              <div class="text-red-500 text-sm">
+                {{ form.last_name.errors }}
+              </div>
+              {% endif %} {{ form.username }} {% if form.username.errors %}
+              <div class="text-red-500 text-sm">{{ form.username.errors }}</div>
+              {% endif %} {{ form.email }} {% if form.email.errors %}
+              <div class="text-red-500 text-sm">{{ form.email.errors }}</div>
+              {% endif %} {{ form.password1 }} {% if form.password1.errors %}
+              <div class="text-red-500 text-sm">
+                {{ form.password1.errors }}
+              </div>
+              {% endif %} {{ form.password2 }} {% if form.password2.errors %}
+              <div class="text-red-500 text-sm">
+                {{ form.password2.errors }}
+              </div>
+              {% endif %}
+              <button
+                type="submit"
+                class="bg-black text-white px-6 py-3 rounded-full hover:bg-gray-800 transition duration-300 w-full"
+              >
+                Continue
+              </button>
+            </div>
+          </form>
+          <p class="mt-4 text-center text-white">
+            Back to
+            <a
+              href="#"
+              class="text-blue-600 hover:underline"
+              onclick="showSignUpOptions()"
+              >sign up options</a
+            >
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sign In Modal -->
+    <div id="signInModal" class="modal items-center justify-center hidden">
+      <div
+        class="bg-[#000080] rounded-lg shadow-lg p-6 w-full max-w-md relative"
+      >
+        <button
+          onclick="closeSignInModal()"
+          class="absolute top-2 right-2 text-white hover:text-gray-800"
+        >
+          &times;
+        </button>
+        <h2 class="text-2xl font-bold mb-4 text-center">
+          Sign In to JournoLab
+        </h2>
+        <form id="signInForm" method="POST">
+          {% csrf_token %}
+          <input type="hidden" name="form_type" value="sign_in" />
+          <!-- Hidden input to identify the form -->
+          <div class="space-y-4">
+            <div>
+              <label for="usernameOrEmail" class="block text-white"
+                >Username or Email</label
+              >
+              <input
+                type="text"
+                name="usernameOrEmail"
+                id="usernameOrEmail"
+                class="border border-gray-300 rounded-full px-4 py-2 w-full text-black"
+                required
+              />
+            </div>
+            <div>
+              <label for="password" class="block text-white">Password</label>
+              <input
+                type="password"
+                name="password"
+                id="password"
+                class="border border-gray-300 rounded-full px-4 py-2 w-full text-black"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              class="bg-black text-white px-6 py-3 rounded-full hover:bg-gray-800 transition duration-300 w-full"
+            >
+              Sign In
+            </button>
+          </div>
+        </form>
+        <p class="mt-4 text-center text-white">
+          Don't have an account?
+          <a
+            href="#"
+            class="text-blue-600 hover:underline"
+            onclick="showSignUp()"
+            >Sign up</a
+          >
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

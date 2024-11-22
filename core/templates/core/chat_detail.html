@@ -1,0 +1,60 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% load tailwind_tags %}
+
+{% block title %}Chat Detail - JournoLab{% endblock %}
+
+{% block content %}
+<div class="flex h-[75vh]">
+    <!-- Left Column: Current Chat Conversation -->
+    <div class="flex-1 flex flex-col overflow-hidden bg-gray-50 rounded-lg shadow-lg">
+        <div class="flex-1 overflow-y-auto p-5">
+            <h2 class="text-2xl font-semibold mb-4 text-black">
+                Chat with 
+                {% if user == chat.participant_two %}
+                    {{ chat.participant_one.username }}
+                {% else %}
+                    {{ chat.participant_two.username }}
+                {% endif %}
+            </h2> <!-- Updated to use participant_two -->
+            <div class="space-y-4">
+                {% for message in messages %}  <!-- Assuming 'messages' contains the chat messages -->
+                    <div class="flex {% if message.sender == user %}justify-end{% else %}justify-start{% endif %}"> <!-- Check sender -->
+                        <div class="w-1/2 {% if message.sender == user %}bg-black text-white{% else %}bg-[#000080]{% endif %} p-4 rounded-lg shadow-lg">
+                            <p><strong>{{ message.sender.username }}:</strong> {{ message.content }}</p> <!-- Assuming 'question' holds the message text -->
+                            <p class="text-sm text-white">{{ message.created_at|date:"F d, Y H:i" }}</p>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p>No messages in this chat yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+        <!-- Input Form at the Bottom -->
+        <div class="bg-gray-50 p-5"> <!-- Match background color -->
+            <form action="{% url 'core:send_message' chat.id %}" method="post">
+                {% csrf_token %}
+                <textarea name="message" rows="2" placeholder="Type your message here..." required 
+                          class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"></textarea>
+                <button type="submit" class="mt-4 bg-[#000080] text-white p-2 rounded-md">Send Message</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Right Column: Other Chats -->
+    <div class="w-1/3 p-5 bg-white rounded-lg shadow-lg ml-4 overflow-y-auto"> <!-- Adjust width as needed -->
+        <h3 class="text-xl font-semibold mb-4 text-black">Other Chats</h3>
+        <div class="space-y-4">
+            {% for other_chat in other_chats %}  <!-- Loop through the user's other chats -->
+                <div class="p-4 bg-[#000080] rounded-lg shadow-sm">
+                    <p class="text-white"><strong>{{ other_chat.participant_two.username }}</strong></p> <!-- Updated to use participant_two -->
+                    <p class="text-white">{{ other_chat.last_message }}</p>  <!-- Assuming last_message is a property -->
+                    <p class="text-sm text-white">{{ other_chat.last_message_date|date:"F d, Y H:i" }}</p> <!-- Updated to last_message_date -->
+                </div>
+            {% empty %}
+                <p class="text-black">No other chats available.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

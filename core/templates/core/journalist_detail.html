@@ -1,0 +1,167 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% load tailwind_tags %}
+
+{% block title %}JournoLab - {{ profile.user.first_name }} {{ profile.user.last_name }}{% endblock %}
+
+{% block content %}
+    <!-- Scrollable Content Area -->
+    <div class="content h-[67vh] overflow-y-auto p-5">  
+        <div class="container mx-auto">           
+            <!-- Profile Card -->
+            <div class="flex flex-col md:flex-row md:space-x-6 bg-white rounded-lg shadow-md drop-shadow-lg p-6">
+                
+                <!-- Profile Picture -->
+                <div class="flex-shrink-0 mb-4 md:mb-0">
+                    {% if profile.profile_picture %}
+                        <img src="{{ profile.profile_picture.url }}" alt="{{ profile.user.first_name }} {{ profile.user.last_name }}'s profile picture" class="h-56 w-56 rounded-full object-cover">
+                    {% else %}
+                        <img src="{% static 'default_profile.png' %}" alt="Default profile picture" class="h-56 w-56 rounded-full object-cover">
+                    {% endif %}
+                </div>
+
+                <!-- Journalist Details -->
+                <div class="flex-grow">
+                    <h1 class="text-4xl font-bold text-gray-800 mb-4" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.2);">
+                        {{ profile.user.first_name }} {{ profile.user.last_name }}
+                    </h1> 
+                    <h2 class="text-xl font-semibold text-gray-700 mb-2">Bio</h2>
+                    <p class="text-gray-600 mb-4">{{ profile.bio|default:"No bio available." }}</p>
+                    
+                    <h2 class="text-xl font-semibold text-gray-700 mb-2">Contact Information</h2>
+                    <p class="text-gray-600">{{ profile.contact_number|default:"No phone number available." }}</p>
+
+                    <!-- Social Media Links -->
+                    <div class="flex space-x-4 mt-4">
+                        {% if profile.twitter %}
+                            <a href="{{ profile.twitter }}" target="_blank" class="text-blue-400 hover:text-blue-500">
+                                <i class="fa-brands fa-twitter"></i> <!-- Font Awesome Twitter Icon -->
+                            </a>
+                        {% endif %}
+                        {% if profile.linkedin %}
+                            <a href="{{ profile.linkedin }}" target="_blank" class="text-blue-700 hover:text-blue-800">
+                                <i class="fa-brands fa-linkedin-in"></i> <!-- Font Awesome LinkedIn Icon -->
+                            </a>
+                        {% endif %}
+                        {% if profile.facebook %}
+                            <a href="{{ profile.facebook }}" target="_blank" class="text-blue-600 hover:text-blue-700">
+                                <i class="fa-brands fa-facebook-f"></i> <!-- Font Awesome Facebook Icon -->
+                            </a>
+                        {% endif %}
+                        {% if profile.instagram %}
+                            <a href="{{ profile.instagram }}" target="_blank" class="text-pink-500 hover:text-pink-600">
+                                <i class="fa-brands fa-instagram"></i> <!-- Font Awesome Instagram Icon -->
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Information Section -->
+            <div class="mt-6">
+                <h2 class="text-3xl font-bold text-black bg-white opacity-100 p-4 mb-4">Additional Information</h2>
+            </div>
+
+            <!-- Certificates Section -->
+            <div class="mt-6">
+                <h2 class="text-3xl font-bold text-white mb-2" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.3);">Certificates</h2>
+                <hr class="border-t-2 border-gray-300 mb-4">
+                
+                {% if profile.certificates.exists %}
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {% for certificate in profile.certificates.all %}
+                            <div class="bg-white shadow-md rounded-lg p-4 flex items-center">
+                                <!-- Certification Icon -->
+                                <div class="flex-shrink-0 text-gold-500 mr-4">
+                                    <i class="fa-solid fa-certificate text-5xl text-yellow-500"></i> <!-- Gold certificate icon -->
+                                </div>
+
+                                <!-- Certificate Details -->
+                                <div>
+                                    <h3 class="text-xl font-semibold text-black mb-1">{{ certificate.title }}</h3>
+                                    <p class="text-gray-600 mb-1"><strong>Issued by </strong>{{ certificate.institution }}</p>
+                                    <p class="text-gray-500 text-sm mb-1"><strong>Issued on </strong>{{ certificate.date_issued|date:"F j, Y" }}</p>
+                                    {% if certificate.certificate_url %}
+                                        <a href="{{ certificate.certificate_url }}" target="_blank" class="text-blue-500 hover:text-blue-700 mt-2 inline-block">View Certificate</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-gray-600">No certificates available.</p>
+                {% endif %}
+            </div>
+
+            <!-- Skills Section -->
+            <div class="mt-8">
+                <h2 class="text-3xl font-bold text-white mb-2" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.3);">Skills</h2>
+                <hr class="border-t-2 border-gray-300 mb-4">
+                
+                {% if profile.skills.exists %}
+                    <div class="flex flex-wrap gap-3">
+                        {% for skill in profile.skills.all %}
+                            <span class="bg-blue-100 text-blue-600 font-semibold px-4 py-2 rounded-full shadow-md">{{ skill.name }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-gray-600">No skills listed.</p>
+                {% endif %}
+            </div>
+
+            <!-- Work Experience Section -->
+            <div class="mt-8">
+                <h2 class="text-3xl font-bold text-white mb-2" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.3);">Work Experience</h2>
+                <hr class="border-t-2 border-gray-300 mb-4">
+                
+                {% if profile.work_experience.exists %}
+                    <div class="space-y-4">
+                        {% for experience in profile.work_experience.all %}
+                            <div class="bg-white shadow-md rounded-lg p-4">
+                                <h3 class="text-xl font-semibold text-black mb-1">{{ experience.job_title }}</h3>
+                                <p class="text-gray-600 mb-1"><strong>Company:</strong> {{ experience.company_name }}</p>
+                                <p class="text-gray-500 mb-1"><strong>Duration:</strong> {{ experience.start_date|date:"F Y" }} - {% if experience.end_date %} {{ experience.end_date|date:"F Y" }} {% else %} Present {% endif %}</p>
+                                <p class="text-gray-600 mb-1"><strong>Description:</strong> {{ experience.description|default:"No description available." }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-gray-600">No work experience listed.</p>
+                {% endif %}
+            </div>
+
+            <!-- Achievements Section -->
+            <div class="mt-8">
+                <h2 class="text-3xl font-bold text-white mb-2 flex items-center">
+                    Achievements
+                </h2>
+                <hr class="border-t-2 border-gray-300 mb-4">
+                
+                {% if profile.achievements.exists %}
+                    <div class="space-y-4">
+                        {% for achievement in profile.achievements.all %}
+                            <div class="bg-white shadow-md rounded-lg p-4 flex items-center">
+                                <!-- Achievement Icon -->
+                                <div class="flex-shrink-0 text-gold-500 mr-4">
+                                    <i class="fa-solid fa-trophy text-5xl text-yellow-500"></i> <!-- Trophy icon for individual achievements -->
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-semibold text-black mb-1">{{ achievement.title }}</h3>
+                                    <p class="text-gray-600 mb-1"><strong>Date Achieved:</strong> {{ achievement.date_achieved|date:"F j, Y" }}</p>
+                                    <p class="text-gray-600 mb-1"><strong>Description:</strong> {{ achievement.description|default:"No description available." }}</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-gray-600">No achievements listed.</p>
+                {% endif %}
+            </div>
+
+            <!-- Back Button -->
+            <div class="mt-6">
+                <a href="{% url 'core:profiles' %}" class="bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg">Back to Profile List</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

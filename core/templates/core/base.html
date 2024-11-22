@@ -1,0 +1,50 @@
+{% load static tailwind_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>{% block title %}JournoLab{% endblock %} - Posts</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    {% tailwind_css %}
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}" />
+    <script src="{% static 'js/posts.js' %}" defer></script>
+
+    <!-- Font Awesome CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    />
+  </head>
+
+  <body
+    class="bg-[#000080] text-white font-serif leading-normal tracking-normal h-screen flex flex-col"
+  >
+    <!-- Main Wrapper -->
+    <div class="w-full flex flex-col flex-grow">
+      {% comment %} Messages {% endcomment %} {% include 'core/messages.html' %}
+
+      <!-- Header Section -->
+      {% include 'core/partials/header.html' %}
+
+      <!-- Full-width Black Divider Above Main Content -->
+      <hr class="border-t-2 border-black w-full" />
+
+      <!-- Main Content Section -->
+      <div
+        class="container mx-auto px-4 lg:px-20 xl:px-32 flex flex-col flex-grow justify-center"
+      >
+        {% block content %}
+        <!-- This block will be overridden in child templates -->
+        {% endblock %}
+      </div>
+
+      <!-- Full-width Black Divider Below Main Content -->
+      <hr class="border-t-2 border-black w-full my-8" />
+    </div>
+
+    <!-- Footer Include -->
+    {% include 'core/partials/footer.html' %}
+  </body>
+</html>
